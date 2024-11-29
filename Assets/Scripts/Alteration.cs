@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Alteration : MonoBehaviour
@@ -10,10 +11,13 @@ public class Alteration : MonoBehaviour
         GravityUp,
         GravityDown
     }
+
+    [SerializeField] private float tileDist = 1f;
     
     private AlterationObject _alteration;
     private AlterationType _alterationType;
     private bool _isAltering;
+    private bool _setInitialPositionStretch;
     
     public void OnTriggerEnter2D(Collider2D other)
     {
@@ -38,12 +42,12 @@ public class Alteration : MonoBehaviour
             if (_isAltering)
             {
                 _alteration.StopAltering();
-                _isAltering = true;
+                _isAltering = false;
             }
             else
             {
                 _alteration.StartAltering();
-                _isAltering = false;
+                _isAltering = true;
             }
         }
 
@@ -78,7 +82,34 @@ public class Alteration : MonoBehaviour
 
     void HandleStretch()
     {
+        if (!_setInitialPositionStretch)
+        {
+            transform.position = transform.position + (transform.position - _alteration.transform.position).normalized * tileDist;
+            _setInitialPositionStretch = true;
+        }
         
+        Vector2 direction = (_alteration.transform.position - transform.position);
+        float dist = direction.magnitude;
+
+        Vector3 scale = Vector2.one;
+        scale.x = dist;
+        _alteration.transform.localScale = scale;
+        
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        _alteration.transform.rotation = Quaternion.Euler(0, 0, angle); 
+        
+        bool stretchingLeft = _alteration.transform.localScale.x > 0;
+
+        Vector3 offset = direction.normalized * (dist / 2);
+
+        if (stretchingLeft)
+        {
+          //  _alteration.transform.position =  _alteration.transform.position - offset;
+        }
+        else
+        {
+          //  _alteration.transform.position =  _alteration.transform.position + offset;
+        }
     }
 
     void HandleGravity(bool up)
@@ -104,6 +135,7 @@ public class Alteration : MonoBehaviour
         if (_isAltering)
         {
             HandleAlterationInput();
+            Debug.Log(_alterationType);
 
             if (_alterationType == AlterationType.Levitate)
             {
@@ -121,7 +153,12 @@ public class Alteration : MonoBehaviour
             {
                 HandleGravity(false);
             }
-            }
+        }
+
+        if (_alterationType != AlterationType.Stretch)
+        {
+            _setInitialPositionStretch = false;
+        }
     }
 
 }
