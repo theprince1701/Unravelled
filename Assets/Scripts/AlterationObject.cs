@@ -1,32 +1,52 @@
+using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class AlterationObject : MonoBehaviour
 {
     
-    [SerializeField] private GameObject interactUI;
     
-    public void OnLookAt()
-    {
-        interactUI.SetActive(true);
-    }
-
-    public void StopLookAt()
-    {
-        interactUI.SetActive(false);
-    }
+    private bool _isInteracting;
+    
+    public Alteration alteration { get; set; }
 
     public void StopAltering()
     {
-        interactUI.SetActive(false);
     }
 
     public void StartAltering()
     {
-        interactUI.SetActive(false);
     }
 
     public void Dismantle()
     {
         Destroy(gameObject);
+    }
+    
+    private void Update()
+    {
+        if (!_isInteracting)
+        {
+            return;
+        }
+        
+        Vector3 mouseScreenPosition = Input.mousePosition;
+
+        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+
+        mouseWorldPosition.z = transform.position.z;
+
+        transform.position = mouseWorldPosition;
+    }
+
+    private void OnMouseDown()
+    {
+        _isInteracting = true;
+        alteration.StopAlteration();
+    }
+
+    public void OnMouseUp()
+    {
+        _isInteracting = false;
     }
 }

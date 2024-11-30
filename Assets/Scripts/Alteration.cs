@@ -13,6 +13,7 @@ public class Alteration : MonoBehaviour
     }
 
     [SerializeField] private float tileDist = 1f;
+    [SerializeField] private AlterationUIManager alterationUIManager;
     
     private AlterationObject _alteration;
     private AlterationType _alterationType;
@@ -24,17 +25,31 @@ public class Alteration : MonoBehaviour
         if (other.TryGetComponent(out AlterationObject alteration))
         {
             _alteration = alteration;
-            _alteration.OnLookAt();
+            _alteration.alteration = this;
         }
     }
     public void OnTriggerExit2D(Collider2D other)
     {
         if (other.TryGetComponent(out AlterationObject alteration))
         {
-            _alteration.StopLookAt();
             _alteration = null;
         }
     }
+
+    public void StopAlteration()
+    {
+        _alteration.StopAltering();
+        _isAltering = false;
+        _alteration = null;
+        alterationUIManager.ToggleVisiblity(false);
+        alterationUIManager.OnAlterationReset();
+    }
+
+    private void Start()
+    {
+        alterationUIManager.ToggleVisiblity(false);
+    }
+
     void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -43,11 +58,14 @@ public class Alteration : MonoBehaviour
             {
                 _alteration.StopAltering();
                 _isAltering = false;
+                alterationUIManager.ToggleVisiblity(false);
+                alterationUIManager.OnAlterationReset();
             }
             else
             {
                 _alteration.StartAltering();
                 _isAltering = true;
+                alterationUIManager.ToggleVisiblity(true);
             }
         }
 
@@ -62,21 +80,25 @@ public class Alteration : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             _alterationType = AlterationType.Levitate;
+            alterationUIManager.OnAlterationSelected(AlterationType.Levitate);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
               _alterationType = AlterationType.Stretch;  
+              alterationUIManager.OnAlterationSelected(AlterationType.Stretch);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-           _alterationType = AlterationType.GravityUp;     
+           _alterationType = AlterationType.GravityUp;   
+           alterationUIManager.OnAlterationSelected(AlterationType.GravityUp);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             _alterationType = AlterationType.GravityDown;
+            alterationUIManager.OnAlterationSelected(AlterationType.GravityDown);
         }
     }
 
@@ -84,32 +106,25 @@ public class Alteration : MonoBehaviour
     {
         if (!_setInitialPositionStretch)
         {
-            transform.position = transform.position + (transform.position - _alteration.transform.position).normalized * tileDist;
-            _setInitialPositionStretch = true;
+       //     transform.position = transform.position + (transform.position - _alteration.transform.position).normalized * tileDist;
+       //     _setInitialPositionStretch = true;
         }
         
         Vector2 direction = (_alteration.transform.position - transform.position);
         float dist = direction.magnitude;
 
-        Vector3 scale = Vector2.one;
-        scale.x = dist;
-        _alteration.transform.localScale = scale;
-        
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        _alteration.transform.rotation = Quaternion.Euler(0, 0, angle); 
-        
-        bool stretchingLeft = _alteration.transform.localScale.x > 0;
+        Vector3 scale = _alteration.transform.localScale;
 
-        Vector3 offset = direction.normalized * (dist / 2);
-
-        if (stretchingLeft)
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-          //  _alteration.transform.position =  _alteration.transform.position - offset;
+            scale.x = dist;
         }
         else
         {
-          //  _alteration.transform.position =  _alteration.transform.position + offset;
+            scale.y = dist;
         }
+
+        _alteration.transform.localScale = scale;
     }
 
     void HandleGravity(bool up)
@@ -135,7 +150,6 @@ public class Alteration : MonoBehaviour
         if (_isAltering)
         {
             HandleAlterationInput();
-            Debug.Log(_alterationType);
 
             if (_alterationType == AlterationType.Levitate)
             {
