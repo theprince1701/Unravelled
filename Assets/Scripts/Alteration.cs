@@ -19,6 +19,8 @@ public class Alteration : MonoBehaviour
     private AlterationType _alterationType;
     private bool _isAltering;
     private bool _setInitialPositionStretch;
+    private bool _didLevitateLogic;
+    
     
     public void OnTriggerEnter2D(Collider2D other)
     {
@@ -138,7 +140,12 @@ public class Alteration : MonoBehaviour
 
     void HandleLevitate()
     {
-        
+        if (!_didLevitateLogic)
+        {
+            _alteration.IsLevitating = !_alteration.IsLevitating;
+            Debug.Log(_alteration.IsLevitating);
+            _didLevitateLogic = true;
+        }
     }
 
     private void Update()
@@ -176,6 +183,11 @@ public class Alteration : MonoBehaviour
         if (_alterationType != AlterationType.Stretch)
         {
             _setInitialPositionStretch = false;
+        }
+
+        if (_alterationType != AlterationType.Levitate)
+        {
+            _didLevitateLogic = false;
         }
     }
 

@@ -7,7 +7,8 @@ public class AlterationObject : MonoBehaviour
     
     
     private bool _isInteracting;
-    
+    public bool IsLevitating { get; set; }
+
     public Alteration alteration { get; set; }
 
     public void StopAltering()
