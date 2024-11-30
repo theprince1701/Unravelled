@@ -20,7 +20,6 @@ public class LevitationBox : MonoBehaviour
         }
         else if (other.tag == "Alteration")
         {
-            Debug.Log(other.GetComponent<AlterationObject>().IsLevitating);
             if (other.GetComponent<AlterationObject>().IsLevitating && other.bounds.size.x > boxCollider.bounds.size.x)
             {
                 _canCross = true;

@@ -9,7 +9,8 @@ public class Alteration : MonoBehaviour
         Levitate,
         Stretch,
         GravityUp,
-        GravityDown
+        GravityDown,
+        None
     }
 
     [SerializeField] private float tileDist = 1f;
@@ -26,6 +27,8 @@ public class Alteration : MonoBehaviour
     {
         if (other.TryGetComponent(out AlterationObject alteration))
         {
+            Debug.Log("can alter");
+
             _alteration = alteration;
             _alteration.alteration = this;
         }
@@ -34,7 +37,9 @@ public class Alteration : MonoBehaviour
     {
         if (other.TryGetComponent(out AlterationObject alteration))
         {
-         //   _alteration = null;
+            Debug.Log("left alter");
+
+            StopAlteration();
         }
     }
 
@@ -46,6 +51,8 @@ public class Alteration : MonoBehaviour
             _isAltering = false;
             _alteration = null;
         }
+        
+        _alterationType = AlterationType.None;
 
         alterationUIManager.ToggleVisiblity(false);
         alterationUIManager.OnAlterationReset();
