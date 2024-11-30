@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 _originalPos;
     private Vector2 _targetPos;
     
+    
     private void Update()
     {
         if (_isMoving)

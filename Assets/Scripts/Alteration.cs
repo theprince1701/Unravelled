@@ -32,15 +32,19 @@ public class Alteration : MonoBehaviour
     {
         if (other.TryGetComponent(out AlterationObject alteration))
         {
-            _alteration = null;
+         //   _alteration = null;
         }
     }
 
     public void StopAlteration()
     {
-        _alteration.StopAltering();
-        _isAltering = false;
-        _alteration = null;
+        if (_alteration)
+        {
+            _alteration.StopAltering();
+            _isAltering = false;
+            _alteration = null;
+        }
+
         alterationUIManager.ToggleVisiblity(false);
         alterationUIManager.OnAlterationReset();
     }

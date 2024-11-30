@@ -1,16 +1,38 @@
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DeathBox : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private BoxCollider2D boxCollider;
+
+    private bool _canCross;
+    public void OnTriggerEnter2D(Collider2D other)
     {
-        
+        if (other.tag == "Player")
+        {
+            Debug.Log("was player");
+
+            if (!_canCross)
+            {
+                Debug.Log("reset pos");
+                SceneManager.LoadScene("GameScene");
+            }
+        }
+        else if (other.tag == "Alteration")
+        {
+            if (other.bounds.size.x > boxCollider.bounds.size.x)
+            {
+                _canCross = true;
+            }
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnTriggerExit2D(Collider2D other)
     {
-        
+        if (other.tag == "Alteration")
+        {
+            _canCross = false;
+        }
     }
 }
