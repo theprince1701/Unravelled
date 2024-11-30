@@ -1,6 +1,14 @@
 using System;
+using System.Collections.Generic;
+using NUnit.Framework;
 using Unity.VisualScripting;
 using UnityEngine;
+
+struct AlterationSaved
+{
+    public AlterationObject AlterationObject;
+    public Alteration.AlterationType AlterationType;
+}
 
 public class Alteration : MonoBehaviour
 {
@@ -10,7 +18,8 @@ public class Alteration : MonoBehaviour
         Stretch,
         GravityUp,
         GravityDown,
-        None
+        None,
+        Dismantle
     }
 
     [SerializeField] private float tileDist = 1f;
@@ -22,13 +31,13 @@ public class Alteration : MonoBehaviour
     private bool _setInitialPositionStretch;
     private bool _didLevitateLogic;
     
+    private List<AlterationSaved> _alterationSaved = new List<AlterationSaved>();
+    
     
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent(out AlterationObject alteration))
         {
-            Debug.Log("can alter");
-
             _alteration = alteration;
             _alteration.alteration = this;
         }
@@ -37,11 +46,51 @@ public class Alteration : MonoBehaviour
     {
         if (other.TryGetComponent(out AlterationObject alteration))
         {
-            Debug.Log("left alter");
-
             StopAlteration();
         }
     }
+
+    public void Dismantle()
+    {
+        _alterationSaved.Add(new AlterationSaved { AlterationObject = _alteration, AlterationType = AlterationType.Dismantle });
+
+        if (_alteration)
+        {
+            _alteration.SetAlterationState(AlterationObjectState.Dismantled);
+        }
+        
+    }
+    
+    private void UndoAlteration()
+    {
+        if (_alterationSaved.Count <= 0)
+        {
+            return;
+        }
+        
+        AlterationSaved saved = _alterationSaved[_alterationSaved.Count-1];
+
+        if (!saved.AlterationObject)
+        {
+            return;
+        }
+        
+        if (saved.AlterationType == AlterationType.Levitate)
+        {
+            saved.AlterationObject.IsLevitating = !saved.AlterationObject.IsLevitating;
+        }
+        else if (saved.AlterationType == AlterationType.Dismantle)
+        {
+            saved.AlterationObject.SetAlterationState(AlterationObjectState.Active);
+        }
+        else if (saved.AlterationType == AlterationType.Stretch)
+        {
+            saved.AlterationObject.transform.localScale = _alteration.defaultScale;
+        }
+        
+        _alterationSaved.RemoveAt(_alterationSaved.Count - 1);
+    }
+
 
     public void StopAlteration()
     {
@@ -65,26 +114,35 @@ public class Alteration : MonoBehaviour
 
     void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (_alteration)
         {
-            if (_isAltering)
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                _alteration.StopAltering();
-                _isAltering = false;
-                alterationUIManager.ToggleVisiblity(false);
-                alterationUIManager.OnAlterationReset();
+                if (_isAltering)
+                {
+                    _alteration.StopAltering();
+                    _isAltering = false;
+                    alterationUIManager.ToggleVisiblity(false);
+                    alterationUIManager.OnAlterationReset();
+                }
+                else
+                {
+                    _alteration.StartAltering();
+                    _isAltering = true;
+                    alterationUIManager.ToggleVisiblity(true);
+                }
             }
-            else
+
+
+            if (Input.GetKeyDown(KeyCode.Q))
             {
-                _alteration.StartAltering();
-                _isAltering = true;
-                alterationUIManager.ToggleVisiblity(true);
+                Dismantle();
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            _alteration.Dismantle();
+            UndoAlteration();
         }
     }
 
@@ -94,24 +152,32 @@ public class Alteration : MonoBehaviour
         {
             _alterationType = AlterationType.Levitate;
             alterationUIManager.OnAlterationSelected(AlterationType.Levitate);
+            _alterationSaved.Add(new AlterationSaved { AlterationObject = _alteration, AlterationType = AlterationType.Levitate });
+
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
               _alterationType = AlterationType.Stretch;  
               alterationUIManager.OnAlterationSelected(AlterationType.Stretch);
+              _alterationSaved.Add(new AlterationSaved { AlterationObject = _alteration, AlterationType = AlterationType.Stretch });
+
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
            _alterationType = AlterationType.GravityUp;   
            alterationUIManager.OnAlterationSelected(AlterationType.GravityUp);
+           _alterationSaved.Add(new AlterationSaved { AlterationObject = _alteration, AlterationType = AlterationType.GravityUp });
+
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             _alterationType = AlterationType.GravityDown;
             alterationUIManager.OnAlterationSelected(AlterationType.GravityDown);
+            _alterationSaved.Add(new AlterationSaved { AlterationObject = _alteration, AlterationType = AlterationType.GravityDown });
+
         }
     }
 
@@ -150,20 +216,20 @@ public class Alteration : MonoBehaviour
         if (!_didLevitateLogic)
         {
             _alteration.IsLevitating = !_alteration.IsLevitating;
-            Debug.Log(_alteration.IsLevitating);
             _didLevitateLogic = true;
         }
     }
 
     private void Update()
     {
+        HandleInput();
+
         if (!_alteration)
         {
             return;
         }
         
-        HandleInput();
-
+        Debug.Log(_alteration);
 
         if (_isAltering)
         {

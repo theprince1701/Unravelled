@@ -2,14 +2,28 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class AlterationObject : MonoBehaviour
+public enum AlterationObjectState
 {
-    
-    
+    InScene,
+    Active,
+    Dismantled
+}
+
+public class AlterationObject : MonoBehaviour
+{    
     private bool _isInteracting;
     public bool IsLevitating { get; set; }
 
     public Alteration alteration { get; set; }
+    public AlterationObjectState alterationState { get; set; }
+    
+    public Vector3 defaultScale { get; set; }
+
+
+    private void Start()
+    {
+        defaultScale = this.transform.localScale;
+    }
 
     public void StopAltering()
     {
@@ -21,7 +35,7 @@ public class AlterationObject : MonoBehaviour
 
     public void Dismantle()
     {
-        Destroy(gameObject);
+        SetAlterationState(AlterationObjectState.Dismantled);
     }
     
     private void Update()
@@ -49,5 +63,24 @@ public class AlterationObject : MonoBehaviour
     public void OnMouseUp()
     {
         _isInteracting = false;
+    }
+
+
+    public void SetAlterationState(AlterationObjectState state)
+    {
+        alterationState = state;
+
+        switch (state)
+        {
+            case AlterationObjectState.Dismantled:
+                gameObject.SetActive(false);
+                break;
+            case AlterationObjectState.InScene:
+                gameObject.SetActive(true);
+                break;
+            case AlterationObjectState.Active:
+                gameObject.SetActive(true);
+                break;
+        }
     }
 }
