@@ -27,7 +27,6 @@ public class AlterationIcon : MonoBehaviour
         else
         {
             animator.Play("Deselect");
-            Debug.Log("deselect");
             isSelected = false;
         }
     }

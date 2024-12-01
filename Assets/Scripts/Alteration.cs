@@ -84,6 +84,16 @@ public class Alteration : MonoBehaviour
         if (saved.AlterationType == AlterationType.Levitate)
         {
             saved.AlterationObject.IsLevitating = !saved.AlterationObject.IsLevitating;
+            
+            if (_alteration.IsLevitating)
+            {
+                _alteration.SetColor(levitateColor);
+            }
+            else
+            {
+                _alteration.SetColor(defaultColor);
+            }
+
         }
         else if (saved.AlterationType == AlterationType.Dismantle)
         {
