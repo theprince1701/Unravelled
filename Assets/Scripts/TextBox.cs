@@ -20,5 +20,9 @@ public class TextBox : MonoBehaviour
             textUI.text += letter; 
             yield return new WaitForSeconds(delayBetweenLetters); 
         }
+
+
+        yield return new WaitForSeconds(1f);
+        textUI.text = "";
     } 
 }

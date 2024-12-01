@@ -10,11 +10,16 @@ public class PlayerMovement : MonoBehaviour
     private bool _isMoving;
     private Vector2 _originalPos;
     private Vector2 _targetPos;
-    
+    private bool _blockMovement; 
+
+    public void BlockMovement(bool value)
+    {
+        _blockMovement = value;
+    }
     
     private void Update()
     {
-        if (_isMoving)
+        if (_isMoving || _blockMovement)
         {
             return;
         }

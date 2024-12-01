@@ -64,7 +64,8 @@ public class Alteration : MonoBehaviour
         {
             _alteration.SetAlterationState(AlterationObjectState.Dismantled);
         }
-        
+
+        Player.Instance.CurrentThreads += GameManager.Instance.LevelStats.threadsBackForDismantle;
     }
     
     private void UndoAlteration()
@@ -85,23 +86,28 @@ public class Alteration : MonoBehaviour
         {
             saved.AlterationObject.IsLevitating = !saved.AlterationObject.IsLevitating;
             
-            if (_alteration.IsLevitating)
+            if ( saved.AlterationObject.IsLevitating)
             {
-                _alteration.SetColor(levitateColor);
+                saved.AlterationObject.SetColor(levitateColor);
             }
             else
             {
-                _alteration.SetColor(defaultColor);
+                saved.AlterationObject.SetColor(defaultColor);
             }
+
+            Player.Instance.CurrentThreads += GameManager.Instance.LevelStats.threadsCostForLevitate;
 
         }
         else if (saved.AlterationType == AlterationType.Dismantle)
         {
             saved.AlterationObject.SetAlterationState(AlterationObjectState.Active);
+            Player.Instance.CurrentThreads -= GameManager.Instance.LevelStats.threadsBackForDismantle;
+
         }
         else if (saved.AlterationType == AlterationType.Stretch)
         {
             saved.AlterationObject.transform.localScale = _alteration.defaultScale;
+            Player.Instance.CurrentThreads += GameManager.Instance.LevelStats.threadsCostForStretch;
         }
         
         _alterationSaved.RemoveAt(_alterationSaved.Count - 1);
@@ -120,7 +126,6 @@ public class Alteration : MonoBehaviour
         _alterationType = AlterationType.None;
 
         alterationUIManager.ToggleVisiblity(false);
-        alterationUIManager.OnAlterationReset();
     }
 
     private void Start()
@@ -167,20 +172,32 @@ public class Alteration : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            _alterationType = AlterationType.Levitate;
-            alterationUIManager.OnAlterationSelected(AlterationType.Levitate);
-            _alterationSaved.Add(new AlterationSaved { AlterationObject = _alteration, AlterationType = AlterationType.Levitate });
+            if (Player.Instance.CurrentThreads >= GameManager.Instance.LevelStats.threadsCostForLevitate)
+            {
+                _alterationType = AlterationType.Levitate;
+                alterationUIManager.OnAlterationSelected(AlterationType.Levitate);
+                _alterationSaved.Add(new AlterationSaved
+                    { AlterationObject = _alteration, AlterationType = AlterationType.Levitate });
+                Player.Instance.CurrentThreads -= GameManager.Instance.LevelStats.threadsCostForLevitate;
+            }
 
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-              _alterationType = AlterationType.Stretch;  
-              alterationUIManager.OnAlterationSelected(AlterationType.Stretch);
-              _alterationSaved.Add(new AlterationSaved { AlterationObject = _alteration, AlterationType = AlterationType.Stretch });
+            if (Player.Instance.CurrentThreads >= GameManager.Instance.LevelStats.threadsCostForStretch)
+            {
+                _alterationType = AlterationType.Stretch;
+                alterationUIManager.OnAlterationSelected(AlterationType.Stretch);
+                _alterationSaved.Add(new AlterationSaved
+                    { AlterationObject = _alteration, AlterationType = AlterationType.Stretch });
+                Player.Instance.CurrentThreads -= GameManager.Instance.LevelStats.threadsCostForStretch;
+            }
 
         }
 
+        //not implemented
+        /*/
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
            _alterationType = AlterationType.GravityUp;   
@@ -196,6 +213,7 @@ public class Alteration : MonoBehaviour
             _alterationSaved.Add(new AlterationSaved { AlterationObject = _alteration, AlterationType = AlterationType.GravityDown });
 
         }
+        /*/
     }
 
     void HandleStretch()
@@ -256,8 +274,6 @@ public class Alteration : MonoBehaviour
             return;
         }
         
-        Debug.Log(_alteration);
-
         if (_isAltering)
         {
             HandleAlterationInput();

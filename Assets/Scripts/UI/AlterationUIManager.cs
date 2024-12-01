@@ -35,10 +35,6 @@ public class AlterationUIManager : MonoBehaviour
 
     public void ToggleVisiblity(bool isVisible)
     { 
-        foreach (AlterationIcon icon in alterationIcons)
-        {
-            icon.PlayAnim(false);
-        }
         alterationBox.SetActive(isVisible);   
     }
 }
