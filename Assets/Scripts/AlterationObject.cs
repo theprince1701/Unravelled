@@ -10,7 +10,8 @@ public enum AlterationObjectState
 }
 
 public class AlterationObject : MonoBehaviour
-{    
+{
+    
     private bool _isInteracting;
     public bool IsLevitating { get; set; }
 
@@ -19,10 +20,18 @@ public class AlterationObject : MonoBehaviour
     
     public Vector3 defaultScale { get; set; }
 
+    private SpriteRenderer _spriteRenderer;
+
 
     private void Start()
     {
         defaultScale = this.transform.localScale;
+        _spriteRenderer  = GetComponent<SpriteRenderer>();
+    }
+
+    public void SetColor(Color color)
+    {
+        _spriteRenderer.color = color;
     }
 
     public void StopAltering()

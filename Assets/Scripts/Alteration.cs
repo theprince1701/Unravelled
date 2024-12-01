@@ -25,6 +25,12 @@ public class Alteration : MonoBehaviour
     [SerializeField] private float tileDist = 1f;
     [SerializeField] private AlterationUIManager alterationUIManager;
     
+    [Space]
+    
+    [SerializeField] private Color defaultColor;
+    [SerializeField] private Color levitateColor;
+
+
     private AlterationObject _alteration;
     private AlterationType _alterationType;
     private bool _isAltering;
@@ -33,7 +39,7 @@ public class Alteration : MonoBehaviour
     
     private List<AlterationSaved> _alterationSaved = new List<AlterationSaved>();
     
-    
+
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent(out AlterationObject alteration))
@@ -110,6 +116,7 @@ public class Alteration : MonoBehaviour
     private void Start()
     {
         alterationUIManager.ToggleVisiblity(false);
+        _alterationType = AlterationType.None;
     }
 
     void HandleInput()
@@ -216,6 +223,16 @@ public class Alteration : MonoBehaviour
         if (!_didLevitateLogic)
         {
             _alteration.IsLevitating = !_alteration.IsLevitating;
+
+            if (_alteration.IsLevitating)
+            {
+                _alteration.SetColor(levitateColor);
+            }
+            else
+            {
+                _alteration.SetColor(defaultColor);
+            }
+            
             _didLevitateLogic = true;
         }
     }
