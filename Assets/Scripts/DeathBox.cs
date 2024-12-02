@@ -32,11 +32,18 @@ public class DeathBox : MonoBehaviour
             {
                 totalX += g.bounds.size.x;
             }
-            Debug.Log("total x: " + totalX);
-            Debug.Log("box bounds: "  + boxCollider.bounds.size.x);
+
             if (totalX >= boxCollider.bounds.size.x-0.25f)
             {
                 _canCross = true;
+                foreach (Collider2D g in objectsInZone)
+                {
+                    if (g.TryGetComponent(out AlterationObject alterationObject))
+                    {
+                        alterationObject.playerCollider2D.gameObject.SetActive(false);
+                    }
+                }
+
                 if (icon)
                 {
                     icon.SetActive(false);
@@ -49,6 +56,10 @@ public class DeathBox : MonoBehaviour
     {
         if (other.tag == "Alteration")
         {
+            if (other.TryGetComponent(out AlterationObject alterationObject))
+            {
+                alterationObject.playerCollider2D.gameObject.SetActive(true);
+            }
             _canCross = false;
         }
     }

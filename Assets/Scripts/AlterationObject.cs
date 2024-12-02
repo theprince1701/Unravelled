@@ -12,6 +12,7 @@ public enum AlterationObjectState
 public class AlterationObject : MonoBehaviour
 {
     [SerializeField] private GameObject icon;
+    [SerializeField] private BoxCollider2D playerCollider;
     [SerializeField] private Vector2 offset;
     
     private bool _isInteracting;
@@ -21,6 +22,8 @@ public class AlterationObject : MonoBehaviour
     public AlterationObjectState alterationState { get; set; }
     
     public Vector3 defaultScale { get; set; }
+    
+    public BoxCollider2D playerCollider2D => playerCollider;
 
     private SpriteRenderer _spriteRenderer;
 
@@ -38,6 +41,7 @@ public class AlterationObject : MonoBehaviour
 
     public void StopAltering()
     {
+        
     }
 
     public void StartAltering()
@@ -56,7 +60,7 @@ public class AlterationObject : MonoBehaviour
             return;
         }
         
-        float tileSize = 1.0f; // Adjust this to match your tile size
+        float tileSize = 1.0f; 
 
         Vector3 mouseScreenPosition = Input.mousePosition;
 
@@ -70,15 +74,31 @@ public class AlterationObject : MonoBehaviour
         transform.position = mouseWorldPosition + new Vector3(0.5f, 0.5f,0 );
     }
 
-    private void OnMouseDown()
+    public void SetInteracting(bool isInteracting)
+    {
+        _isInteracting = isInteracting;
+    }
+
+    public void StopAlter()
+    {
+        alteration.StopAlteration();
+    }
+
+    public void OnMouseDown()
     {
         _isInteracting = true;
-        alteration.StopAlteration();
+        if (alteration)
+        {
+            alteration.StopAlteration();
+        }
+
+        playerCollider2D.enabled = false;
     }
 
     public void OnMouseUp()
     {
         _isInteracting = false;
+        playerCollider2D.enabled = true;
     }
 
 
