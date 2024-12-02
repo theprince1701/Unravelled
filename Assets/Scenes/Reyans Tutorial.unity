@@ -1112,11 +1112,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3561071652475569167, guid: 170048361ce2a0f40bd1285cdd7d8143, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.15
+      value: 9.11
       objectReference: {fileID: 0}
     - target: {fileID: 3561071652475569167, guid: 170048361ce2a0f40bd1285cdd7d8143, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.28
+      value: 8.35
       objectReference: {fileID: 0}
     - target: {fileID: 3561071652475569167, guid: 170048361ce2a0f40bd1285cdd7d8143, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1156,11 +1156,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8039826812906235746, guid: 170048361ce2a0f40bd1285cdd7d8143, type: 3}
       propertyPath: textToSay
-      value: Maybe I can levitate that rock to cross?
+      value: The abyss...Cant just put a bridge over it. Need to make sure that my
+        bridge has the distinct orange shine that tells me its levitating.
+      objectReference: {fileID: 0}
+    - target: {fileID: 8039826812906235746, guid: 170048361ce2a0f40bd1285cdd7d8143, type: 3}
+      propertyPath: onlyPlayOnce
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8039826812906235746, guid: 170048361ce2a0f40bd1285cdd7d8143, type: 3}
       propertyPath: destroyOnPlay
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -42306,7 +42311,7 @@ Transform:
   m_GameObject: {fileID: 1958780227}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.49, y: 5.52, z: 0}
+  m_LocalPosition: {x: -7.49, y: 4.46, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -42899,7 +42904,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3561071652475569167, guid: 170048361ce2a0f40bd1285cdd7d8143, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.87
+      value: -5.98
       objectReference: {fileID: 0}
     - target: {fileID: 3561071652475569167, guid: 170048361ce2a0f40bd1285cdd7d8143, type: 3}
       propertyPath: m_LocalPosition.y
