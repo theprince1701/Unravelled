@@ -73,7 +73,7 @@ public class AlterationObject : MonoBehaviour
         mouseWorldPosition.z = transform.position.z;
 
 // Update the object's position
-        transform.position = mouseWorldPosition + new Vector3(offset.x, offset.y, 0);
+        transform.position = mouseWorldPosition + new Vector3(0.5f, 0.5f,0 );
     }
 
     private void OnMouseDown()
