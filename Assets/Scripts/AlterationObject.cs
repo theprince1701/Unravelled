@@ -11,6 +11,7 @@ public enum AlterationObjectState
 
 public class AlterationObject : MonoBehaviour
 {
+    [SerializeField] private GameObject icon;
     
     private bool _isInteracting;
     public bool IsLevitating { get; set; }

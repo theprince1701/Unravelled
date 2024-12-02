@@ -4,7 +4,8 @@ using UnityEngine.SceneManagement;
 public class LevitationBox : MonoBehaviour
 {
     [SerializeField] private BoxCollider2D boxCollider;
-    
+    [SerializeField] private GameObject icon;
+
     private bool _canCross;
     public void OnTriggerEnter2D(Collider2D other)
     {
@@ -23,6 +24,7 @@ public class LevitationBox : MonoBehaviour
             if (other.GetComponent<AlterationObject>().IsLevitating && other.bounds.size.x > boxCollider.bounds.size.x)
             {
                 _canCross = true;
+                icon.SetActive(false);
             }
         }
     }

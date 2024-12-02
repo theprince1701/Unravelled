@@ -7,6 +7,8 @@ public class TextBoxTrigger : MonoBehaviour
     [SerializeField] private bool onlyPlayOnce = true;
     [SerializeField] private bool destroyOnPlay;
 
+    [SerializeField] private GameObject icon;
+
     private TextBox _textBox;
     private bool _played;
     
@@ -27,6 +29,11 @@ public class TextBoxTrigger : MonoBehaviour
                 if (destroyOnPlay)
                 {
                     Destroy(gameObject);
+                }
+
+                if (icon)
+                {
+                    icon.SetActive(true);
                 }
             }
         }

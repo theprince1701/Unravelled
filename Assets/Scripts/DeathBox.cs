@@ -1,29 +1,45 @@
 using System;
+using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class DeathBox : MonoBehaviour
 {
     [SerializeField] private BoxCollider2D boxCollider;
+    [SerializeField] private GameObject icon;
 
+    
+    private List<Collider2D> objectsInZone = new List<Collider2D>();
+    
     private bool _canCross;
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player")
         {
-            Debug.Log("was player");
-
             if (!_canCross)
             {
-                Debug.Log("reset pos");
                 SceneManager.LoadScene("GameScene");
             }
         }
         else if (other.tag == "Alteration")
         {
-            if (other.bounds.size.x > boxCollider.bounds.size.x)
+            objectsInZone.Add(other);
+
+            float totalX = 0;
+
+            foreach (Collider2D g in objectsInZone)
+            {
+                totalX += g.bounds.size.x;
+            }
+            
+            if (totalX >= boxCollider.bounds.size.x)
             {
                 _canCross = true;
+                if (icon)
+                {
+                    icon.SetActive(false);
+                }
             }
         }
     }
