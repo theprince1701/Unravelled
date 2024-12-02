@@ -15,6 +15,6 @@ MonoBehaviour:
   currentLevelName: Tutorial
   nextLevelName: Level1
   startingThreads: 3
-  threadsBackForDismantle: 2
+  threadsBackForDismantle: 1
   threadsCostForStretch: 1
   threadsCostForLevitate: 1

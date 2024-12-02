@@ -224,32 +224,26 @@ public class Alteration : MonoBehaviour
        //     _setInitialPositionStretch = true;
         }
         
-        // Define the size of a tile
-        float tileSize = tileDist; // Adjust this to match your tile size
+        float tileSize = tileDist; 
 
-// Calculate the direction and distance
         Vector2 direction = (_alteration.transform.position - transform.position);
         float dist = direction.magnitude;
 
-// Snap the distance to the nearest tile multiple
         float snappedDist = Mathf.Round(dist / tileSize) * tileSize;
 
-// Get the current scale of the alteration object
         Vector3 scale = _alteration.transform.localScale;
 
-// Scale along the axis of the greater direction component (x or y)
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-            scale.x = snappedDist; // Snap along x-axis
-            scale.y = tileSize;    // Keep the scale along y-axis uniform
+            scale.x = snappedDist; 
+            scale.y = tileSize;  
         }
         else
         {
-            scale.y = snappedDist; // Snap along y-axis
-            scale.x = tileSize;    // Keep the scale along x-axis uniform
+            scale.y = snappedDist;
+            scale.x = tileSize;    
         }
-
-// Apply the snapped scale
+        
         _alteration.transform.localScale = scale;
     }
 

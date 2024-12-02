@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 public class LevitationBox : MonoBehaviour
@@ -6,14 +7,14 @@ public class LevitationBox : MonoBehaviour
     [SerializeField] private BoxCollider2D boxCollider;
     [SerializeField] private GameObject icon;
 
+    private List<Collider2D> objectsInZone = new List<Collider2D>();
+
+    
     private bool _canCross;
     public void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("something entered");
         if (other.tag == "Player")
         {
-            Debug.Log("was player");
-
             if (!_canCross)
             {
                 SceneManager.LoadScene("GameScene");
@@ -21,10 +22,29 @@ public class LevitationBox : MonoBehaviour
         }
         else if (other.tag == "Alteration")
         {
-            if (other.GetComponent<AlterationObject>().IsLevitating && other.bounds.size.x > boxCollider.bounds.size.x)
+            float totalX = 0;
+            foreach (Collider2D g in objectsInZone)
+            {
+                totalX += g.bounds.size.x;
+            }
+
+            bool allLevitating = true;
+
+            foreach (Collider2D g in objectsInZone)
+            {
+                if (!g.GetComponent<AlterationObject>().IsLevitating)
+                {
+                    allLevitating = false;
+                }
+            }
+            
+            if (totalX >= boxCollider.bounds.size.x && allLevitating)
             {
                 _canCross = true;
-                icon.SetActive(false);
+                if (icon)
+                {
+                    icon.SetActive(false);
+                }
             }
         }
     }

@@ -32,8 +32,9 @@ public class DeathBox : MonoBehaviour
             {
                 totalX += g.bounds.size.x;
             }
-            
-            if (totalX >= boxCollider.bounds.size.x)
+            Debug.Log("total x: " + totalX);
+            Debug.Log("box bounds: "  + boxCollider.bounds.size.x);
+            if (totalX >= boxCollider.bounds.size.x-0.25f)
             {
                 _canCross = true;
                 if (icon)
