@@ -12,6 +12,7 @@ public enum AlterationObjectState
 public class AlterationObject : MonoBehaviour
 {
     [SerializeField] private GameObject icon;
+    [SerializeField] private Vector2 offset;
     
     private bool _isInteracting;
     public bool IsLevitating { get; set; }
@@ -55,13 +56,24 @@ public class AlterationObject : MonoBehaviour
             return;
         }
         
+// Define the size of a tile
+        float tileSize = 1.0f; // Adjust this to match your tile size
+
+// Get the mouse position in screen space
         Vector3 mouseScreenPosition = Input.mousePosition;
 
+// Convert the mouse position to world space
         Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
 
+// Snap the world position to the nearest tile
+        mouseWorldPosition.x = Mathf.Round(mouseWorldPosition.x / tileSize) * tileSize;
+        mouseWorldPosition.y = Mathf.Round(mouseWorldPosition.y / tileSize) * tileSize;
+
+// Keep the z-position unchanged (or set explicitly if needed)
         mouseWorldPosition.z = transform.position.z;
 
-        transform.position = mouseWorldPosition;
+// Update the object's position
+        transform.position = mouseWorldPosition + new Vector3(offset.x, offset.y, 0);
     }
 
     private void OnMouseDown()
